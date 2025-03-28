@@ -27,7 +27,7 @@ This project implements a robust Sync Service for tickete using NestJS and TypeS
   - Api to return all the slots available for a given `date` and product `id`
 
   ```
-   curl --location 'http://localhost:5002/api/v1/experience/{productId}?date={date}'
+   curl --location 'https://tickete-assignment-6pcm.onrender.com/api/v1/experience/{productId}?date={date}'
 
   ```
 
@@ -36,7 +36,7 @@ This project implements a robust Sync Service for tickete using NestJS and TypeS
   - Api to return all available date for next 2 months.
 
   ```
-   curl --location 'http://localhost:5002/api/v1/experience/{productId}/dates'
+   curl --location 'https://tickete-assignment-6pcm.onrender.com/api/v1/experience/{productId}/dates'
   ```
 
 - **Sync Control API**:
@@ -44,13 +44,13 @@ This project implements a robust Sync Service for tickete using NestJS and TypeS
   - Pauses all scheduled syncs
 
   ```
-   curl --location --request POST 'http://localhost:5002/api/v1/experience/sync/pause'
+   curl --location --request POST 'https://tickete-assignment-6pcm.onrender.com/api/v1/experience/sync/pause'
   ```
 
   - Resumes paused syncs
 
   ```
-   curl --location --request POST 'http://localhost:5002/api/v1/experience/sync/resume'
+   curl --location --request POST 'https://tickete-assignment-6pcm.onrender.com/api/v1/experience/sync/resume'
   ```
 
 
