@@ -15,7 +15,7 @@ This project implements a robust Sync Service for tickete using NestJS and TypeS
 
 - **SyncService**: Core service for making API requests to partner endpoints.
 - **SchedulerService**: Implements scheduled fetching at three different intervals:
-  - Daily (1 AM): Fetches availability for the next 30 days
+  - Daily (12 AM): Fetches availability for the next 30 days
   - Every 4 hours: Fetches availability for the next 7 days
   - Every 15 minutes: Fetches availability for today
 - **SlotController**: Provides sync control and fetch availability slots and dates endpoints.
@@ -59,7 +59,7 @@ This project implements a robust Sync Service for tickete using NestJS and TypeS
 1. **Rate Limiting Strategy**:
 
    - Used Bottleneck to implement rate limiting.
-   - Configured for max 5 concurrent requests.
+   - Configured for max 2 concurrent requests.
    - Added 2-second delay between requests to stay well below the 30 requests/minute limit.
    - Included retry logic for rate limit errors (HTTP 429).
 
@@ -79,10 +79,8 @@ This project implements a robust Sync Service for tickete using NestJS and TypeS
 4. **Sync Control**:
    - RESTful API endpoints for controlling sync operations.
    - Pause/resume capability for maintenance windows or emergency stops.
-   - Manual trigger for immediate sync when needed.
-   - Status endpoint for monitoring current state.
 
-## Improvements
+## Improvements for optimization
 
 1. Implementing caching to avoid unnecessary API calls for frequently requested data.
 2. Implementing in-memory database like redis to store all job metadata to distribute work load on the multiple servers.
