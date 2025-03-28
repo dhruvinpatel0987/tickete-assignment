@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { SchedulerService } from './services/scheduler.service';
 import { SyncActionResponseDto } from './dto/sync-status.dto';
@@ -80,7 +81,16 @@ export class SlotController {
     @Param('productId') productId: string,
     @Query('date') date?: string,
   ): Promise<AvailableSlotWithRelations[]> {
-    const start = date ? new Date(date) : new Date();
+    if (!productId) {
+      throw new BadRequestException('Product ID is required');
+    }
+
+    if (!date || isNaN(new Date(date).getTime())) {
+      throw new BadRequestException(
+        'Invalid date format, please use YYYY-MM-DD',
+      );
+    }
+    const start = new Date(date);
 
     const inventory = (await this.SlotRepository.findByDateRange(
       start,
@@ -96,7 +106,11 @@ export class SlotController {
   @Get('/:productId/dates')
   async getInventoryDates(
     @Param('productId') productId: string,
-  ): Promise<{ date: string }[]> {
+  ): Promise<{ date: string; price: Price }[]> {
+    if (!productId) {
+      throw new BadRequestException('Product ID is required');
+    }
+
     const startDate = new Date();
 
     const endDate = new Date(startDate);

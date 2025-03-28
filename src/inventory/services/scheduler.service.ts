@@ -96,7 +96,7 @@ export class SchedulerService implements OnModuleInit {
 
   /**
    * Fetch inventory daily for a 30-day window
-   * Runs at 1:00 AM every day
+   * Runs at 00:00 AM every day
    */
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async fetchDailyInventory(): Promise<void> {
