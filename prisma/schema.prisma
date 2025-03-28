@@ -1,0 +1,78 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// PassengerTypes table to store the different passenger categories
+model PassengerType {
+  id          String               @id @map("type") // e.g., "ADULT_12~99"
+  name        String               @db.VarChar(50)      // e.g., "Adult"
+  description String               @db.VarChar(100)     // e.g., "12-99 years"
+  
+  // Relations
+  availabilities PaxAvailability[]
+
+  @@map("passenger_types")
+}
+
+// AvailableSlots table combines slot information with variant
+model AvailableSlot {
+
+  id             String               @id @map("slot_id") // e.g., "225532707686_2025-03-25T08:00"
+  startDate      DateTime             @map("start_date") @db.Date
+  startTime      String               @map("start_time") 
+  endTime        String               @map("end_time")
+  productId      String               @map("product_id")
+  variantId      Int                  @map("variant_id")
+  remaining      Int                  @map("remaining")
+  currencyCode   String               @map("currency_code") @db.VarChar(3)
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  paxAvailabilities PaxAvailability[]
+
+  @@index([startDate, startTime], name: "idx_slot_datetime")
+  @@map("available_slots")
+}
+
+// Price stores standard pricing information that can be reused across multiple slots
+model Price {
+  id                Int                 @id @default(autoincrement())
+  originalPrice     Float               @map("original_price")
+  discount          Float               @default(0) @map("discount")
+  finalPrice        Float               @map("final_price")
+  currencyCode      String              @map("currency_code") @db.VarChar(3)
+  
+  // Relations
+  paxAvailabilities PaxAvailability[] // A price can be used by multiple pax availabilities
+
+  @@unique([originalPrice, discount, finalPrice, currencyCode]) // Ensure unique price combinations
+  @@map("prices")
+}
+
+// PaxAvailability stores availability information for each passenger type in each slot
+model PaxAvailability {
+  id          Int           @id @default(autoincrement())
+  productId   String        @map("product_id")
+  slotId      String        @map("slot_id")
+  paxType     String        @map("pax_type")
+  min         Int           @map("min")
+  max         Int           @map("max")
+  remaining   Int
+  isPrimary   Boolean       @default(false) @map("is_primary")
+  priceId     Int           @map("price_id")
+  
+  // Relations
+  slot        AvailableSlot  @relation(fields: [slotId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  passengerType PassengerType @relation(fields: [paxType], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  price       Price          @relation(fields: [priceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([slotId, paxType])
+  @@map("pax_availability")
+}
